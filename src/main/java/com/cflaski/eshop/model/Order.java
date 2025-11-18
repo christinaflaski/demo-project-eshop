@@ -4,6 +4,7 @@ import com.cflaski.eshop.core.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,8 +26,11 @@ public class Order extends AbstractEntity{
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+
     @Column(nullable = false)
-    private double price;
+    private BigDecimal price = BigDecimal.ZERO;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
+    private BigDecimal shippingPrice = BigDecimal.ZERO;
 
     @Embedded
     private Address shippingAddress;
@@ -46,6 +50,10 @@ public class Order extends AbstractEntity{
         if (status == null) {
             status = OrderStatus.PENDING;
         }
+    }
+
+    public void totalPriceInit() {
+        totalPrice = price.add(shippingPrice);
     }
 
     public void addPayment(Payment payment) {
